@@ -1,0 +1,47 @@
+
+#instadesktop
+    #webcam-feed.col-xs-12.col-sm-6
+        %span WEBCAM FEED HERE
+    #snapshot.col-xs-12.col-sm-6
+        %h1 EVENT: LIGHTS OFF
+        %h2 AVERAGE LIGHT VALUE HERE
+    
+// IGNORE, BUT KEEP THIS LINE (Back button)   
+= render :partial => "application/back_to_root"
+:scss
+    #instadesktop{
+        height: 100%;
+        width: 100%;
+        color: white;
+        font-family: Avenir, sans-serif;
+        font-size: 4em;
+        text-align: center;
+            
+        #webcam-feed{
+            height: 100%;
+            background: desaturate(blue, 80%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            button{
+                position: absolute;
+                bottom: 0;
+            }
+        }
+        #snapshot{
+            height: 100%;
+            background: desaturate(red, 80%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            position: relative;
+        }
+    }
+    #back-button{
+        position: absolute;
+        z-index: 100;
+        top: 15px;
+        left: 15px;
+    }

@@ -1,0 +1,80 @@
+#instadesktop
+    #webcam-feed.col-xs-12.col-sm-6
+        %video#video{:autoplay => "", :height => "480", :width => "640"}
+        %canvas#canvas{:height => "480", :width => "640"}
+    #snapshot.col-xs-12.col-sm-6
+        %h1#lights EVENT: LIGHTS ON
+        %h2#avg_lum Luminance
+    
+// IGNORE, BUT KEEP THIS LINE (Back button)   
+= render :partial => "application/back_to_root"
+:scss
+    #instadesktop{
+        height: 100%;
+        width: 100%;
+        color: white;
+        font-family: Avenir, sans-serif;
+        font-size: 4em;
+        text-align: center;
+            
+        #webcam-feed{
+            height: 100%;
+            background: desaturate(blue, 80%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            button{
+                position: absolute;
+                bottom: 0;
+            }
+        }
+        #snapshot{
+            height: 100%;
+            background: desaturate(red, 80%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            position: relative;
+        }
+    }
+    #back-button{
+        position: absolute;
+        z-index: 100;
+        top: 15px;
+        left: 15px;
+    }
+
+:coffeescript
+    canvas = document.getElementById('canvas')
+    context = canvas.getContext('2d')
+    video = document.getElementById('video')
+    if navigator.mediaDevices and navigator.mediaDevices.getUserMedia
+        navigator.mediaDevices.getUserMedia(video: true).then (stream) ->
+            video.src = window.URL.createObjectURL(stream)
+            video.play()
+            return
+    max_lum = 0
+    video.ontimeupdate = ->
+        context.drawImage(video, 0, 0, 640, 480);
+        imgData = context.getImageData(0, 0, canvas.width, canvas.height)
+        data = imgData.data
+        i = 0
+        luminance = 0
+        while i < data.length
+            red = data[i]
+            green = data[i+1]
+            blue = data[i+2]
+            alpha = data[i+3]
+            px_lum = 0.2126*red + 0.7152*green + 0.0722*blue
+            luminance += px_lum
+            i += 4
+        avg_lum = luminance / (data.length/4)
+        if max_lum < avg_lum
+            max_lum = avg_lum
+        document.getElementById('avg_lum').innerHTML = avg_lum.toString()
+        if max_lum * .75 > avg_lum
+            document.getElementById('lights').innerHTML = "EVENT: LIGHTS OFF"
+        else if max_lum * .75 <= avg_lum
+            document.getElementById('lights').innerHTML = "EVENT: LIGHTS ON"

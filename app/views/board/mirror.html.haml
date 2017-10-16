@@ -1,0 +1,180 @@
+
+
+#webcam-feed
+    %video#video{:autoplay => "", :height => "100%", :width => "100%"} 
+%audio#song{:src => "", :type => "audio/mpeg"}
+%audio#comment{:src => "", :type => "audio/mpeg"}
+#left.border
+#right.border
+#top.border
+#bottom.border
+
+      
+// IGNORE, BUT KEEP THIS LINE (Back button)   
+= render :partial => "application/back_to_root"
+
+:scss
+    .border{
+        background: white;
+        position: fixed;
+    }
+    #webcam-feed{
+        overflow: hidden;
+    }
+    #video{
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: center;        
+        text-align: center;
+        font-family: Avenir, sans-serif;
+        font-size: 3em;
+        color: black;
+        -webkit-transform:rotateY(180deg);
+    }
+    #top {
+    	left: 0;
+    	right: 0;
+    	height: 15px;
+    	top: 0;
+    }
+    #bottom {
+    	left: 0;
+    	right: 0;
+    	height: 15px;
+    	bottom: 0;
+    }
+    #left {
+    	top: 0;
+    	bottom: 0;
+    	width: 15px;
+    	left: 0;
+    }
+    #right {
+    	top: 0;
+    	bottom: 0;
+    	width: 15px;
+    	right: 0;
+    }
+
+:javascript
+    var connection = new WebSocket('wss://p4-lov-bryanlov.c9users.io:8081')
+    var border = document.getElementsByClassName("border")
+    var video = document.getElementById("video")
+    var audio = document.getElementById("comment")
+    var song = document.getElementById("song")
+    var currPlaylist = ""
+    var rockMusic = ["#{audio_path 'saluteYourSolution.mp3'}", 
+                        "#{audio_path 'sevenNationArmy.mp3'}", 
+                        "#{audio_path 'victorious.mp3'}"]
+    var indieMusic = ["#{audio_path 'death_of_a_bachelor.mp3'}", 
+                        "#{audio_path 'do_it.mp3'}", 
+                        "#{audio_path 'fiona_coyne.mp3'}", 
+                        "#{audio_path 'penelope.mp3'}", 
+                        "#{audio_path 'smoke_filled_room.mp3'}", 
+                        "#{audio_path 'time_is_running_out.mp3'}"]
+    var classicalMusic = ["#{audio_path 'counting_stars.mp3'}", 
+                            "#{audio_path 'flute_story_two.mp3'}", 
+                            "#{audio_path 'lucid_dream.mp3'}"]
+    var compliments = ["#{audio_path 'lookingood.mp3'}", 
+                        "#{audio_path 'sogoodinthat.mp3'}", 
+                        "#{audio_path 'thatsnice.mp3'}"]
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({
+            video: true
+        }).then(function(stream) {
+            video.src = window.URL.createObjectURL(stream);
+            video.play();
+        });
+    }
+    
+    function getRandomSong(lst) {
+      var min = Math.ceil(0);
+      var max = Math.floor(lst.length);
+      var index = Math.floor(Math.random() * (max - min)) + min;
+      return lst[index]
+    }
+    
+    connection.onmessage = function(e) {
+        console.log("connection.onmessage called in mirror.html.haml")
+        if(e.data == "closeUp"){
+            //zoom on face
+            //give complement
+        } else if (e.data == "farAway") {
+            //
+        }
+        // if (e.data == "passby") {
+        //     for (var i = 0; i < border.length; i++) {
+        //         border[i].style.background = "white"
+        //         video.innerHTML = "Welcome Back"
+        //     }
+        //     currPlaylist = ""
+        //     audio.src = "#{audio_path 'welcome.mp3'}"
+        //     audio.play()
+        //     song.pause()
+        // } else if (e.data == "activity") {
+        //     for (var i = 0; i < border.length; i++) {
+        //         border[i].style.background = "red"
+        //     }
+        //     if (!(!song.ended && currPlaylist == "Rock")) {
+        //         currPlaylist = "Rock"
+        //         //audio.pause()
+        //         song.pause()
+        //         song.src = getRandomSong(rockMusic)
+        //         song.play()
+        //     }
+        // } else if (e.data == "relax") {
+        //     for (var i = 0; i < border.length; i++) {
+        //         border[i].style.background = "lightSkyBlue"
+        //     }
+        //     if (!(!song.ended && currPlaylist == "Classical")) {
+        //         currPlaylist = "Classical"
+        //         audio.pause()
+        //         song.pause()
+        //         song.src = getRandomSong(classicalMusic)
+        //         song.play()
+        //     }
+        // } else if (e.data == "leisure") {
+        //     for (var i = 0; i < border.length; i++) {
+        //         border[i].style.background = "green"
+        //     }
+        //     if (!(!song.ended && currPlaylist == "Indie")) {
+        //         currPlaylist = "Indie"
+        //         //audio.pause()
+        //         song.pause()
+        //         song.src = getRandomSong(indieMusic)
+        //         song.play()
+        //     }
+
+        // } else if (e.data == "posing") {
+        //     for (var i = 0; i < border.length; i++) {
+        //         border[i].style.background = "yellow"
+        //     }
+        //     var songVolume
+        //     audio.src = getRandomSong(compliments)
+        //     audio.play()
+        //     if (!(!song.ended && currPlaylist == "Indie")) {
+        //         currPlaylist = "Indie"
+        //         song.pause()
+        //         song.src = getRandomSong(indieMusic)
+        //         song.play()
+                
+        //     }
+        // } else if (e.data == "leaving") {
+        //     song.pause()
+        //     song.currentTime = 0
+        //     audio.src = "#{audio_path 'goodbye.mp3'}"
+        //     audio.play()
+        //     for (var i = 0; i < border.length; i++) {
+        //         border[i].style.background = "white"
+        //         video.innerHTML = "Goodbye"
+        //     }
+        // } 
+        else {
+            audio.pause()
+            song.pause()
+            console.log("Error, e.data was unlisted: " + e.data)
+        }
+    }
+
+   

@@ -1,0 +1,44 @@
+:coffeescript
+    $ ->
+        connection = new WebSocket('wss://p4-lov-bryanlov.c9users.io:8081')
+        messageToSend = "Hello"
+        connection.onmessage = (e) ->
+            msg = JSON.parse(e.data)
+            identity = msg.identity
+            if identity == "mirror"
+                $('#greet').text msg.message
+        $("#btn").on "click", ->
+            messageToSend = messageToSend + "!"
+            msgObj = {identity: "wand", message: messageToSend}
+            connection.send JSON.stringify(msgObj)
+            console.log JSON.stringify(msgObj)
+        
+#wand
+    %h1#greet I am the wand
+    %button#btn{:type => "button"} Send Message
+
+// IGNORE, BUT KEEP THIS LINE (Back button)   
+= render :partial => "application/back_to_root"
+    
+:scss
+    $bg: desaturate(purple, 70%);
+    html, body{ overflow: none;}
+    #wand{
+        height: 100%;
+        width: 100%;
+        overflow: none;
+        color: white;
+        font-family: Avenir, sans-serif;
+        font-size: 4em;
+        text-align: center;
+            
+        background: $bg;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    #btn{
+        background-color: 'black';
+    }
+    

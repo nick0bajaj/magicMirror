@@ -1,0 +1,50 @@
+.container-fluid
+    .col-xs-12.text-center
+        .wiz-btn-group
+            .row
+                %button.wizbtn#passby Passing By
+            .row
+                %button.wizbtn#activity Activity
+            .row
+                %button.wizbtn#relax Relaxing
+            .row
+                %button.wizbtn#leisure Leisure
+            .row
+                %button.wizbtn#posing Posing
+            .row
+                %button.wizbtn#leaving Leaving
+
+// IGNORE, BUT KEEP THIS LINE (Back button)   
+= render :partial => "application/back_to_root"
+
+:coffeescript
+    connection = new WebSocket('wss://p4-lov-bryanlov.c9users.io:8081')
+    $ ->
+        $('#passby').on "click", ->
+            connection.send("passby")
+        $('#activity').on "click", ->
+            connection.send("activity")
+        $('#relax').on "click", ->
+            connection.send("relax")
+        $('#leisure').on "click", ->
+            connection.send("leisure")
+        $('#posing').on "click", ->
+            connection.send("posing")
+        $('#leaving').on "click", ->
+            connection.send("leaving")
+
+
+:scss
+    .wizbtn {
+        width: 200px;
+        background-color: #4CAF50; 
+        border: 1px solid green;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 20px;
+        margin-bottom: 5px;
+    }

@@ -1,0 +1,33 @@
+:coffeescript
+    $ ->
+        console.log "WEBSOCKET TO MIRROR HERE"
+        console.log "WEBSOCKET HANDLER FROM MIRROR HERE"
+        
+        
+
+#wand
+    %h1 I am the wand
+
+    
+// IGNORE, BUT KEEP THIS LINE (Back button)   
+= render :partial => "application/back_to_root"
+    
+:scss
+    $bg: desaturate(purple, 70%);
+    html, body{ overflow: none;}
+    #wand{
+        height: 100%;
+        width: 100%;
+        overflow: none;
+        color: white;
+        font-family: Avenir, sans-serif;
+        font-size: 4em;
+        text-align: center;
+            
+        background: $bg;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    

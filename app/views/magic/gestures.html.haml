@@ -1,0 +1,177 @@
+:coffeescript
+    $ ->
+        vectors = []
+        a = 0
+        b = 0
+        g = 0
+        x = 0
+        y = 0
+        z = 0
+        events = 0 
+        $(window).on "devicemotion", (event) ->
+            m_event = event.originalEvent
+            x = (m_event.acceleration.x * 100).toFixed()
+            y = (m_event.acceleration.y * 100).toFixed()
+            z = (m_event.acceleration.z * 100).toFixed()
+            accelText = x + ", " + y + ", " + z
+            $("#acceleration").text accelText
+            events += 1
+            
+            vectors.push([a, b, g, x, y, z])
+                if vectors.length > 50
+                    vectors.shift(vectors)
+                
+                if events >= 25 and vectors.length > 49
+                    process()
+                    events = 0
+        $(window).on "deviceorientation", (event) ->
+            o_event = event.originalEvent
+            a = o_event.alpha.toFixed()
+            b = o_event.beta.toFixed()
+            g = o_event.gamma.toFixed()
+            oriText = a + ", " + b + ", " + g
+            $("#orientation").text oriText
+            events += 1
+            
+            vectors.push([a, b, g, x, y, z])
+                if vectors.length > 50
+                    vectors.shift(vectors)
+                
+                if events >= 25 and vectors.length > 49
+                    process()
+                    events = 0        
+        totalEvents = 0
+        xTotal = 0
+        yTotal = 0
+        zTotal = 0
+        aTotal = 0
+        bTotal = 0
+        gTotal = 0
+        prevAverage = []
+        period = 1000
+        currAverage = []
+        $(window).on "devicemotion", (event) ->
+            m_event = event.originalEvent
+            if m_event.acceleration.x != null
+                x = (m_event.acceleration.x * 100).toFixed()
+                y = (m_event.acceleration.y * 100).toFixed()
+                z = (m_event.acceleration.z * 100).toFixed()
+                xTotal = xTotal + Math.round m_event.acceleration.x * 100
+                yTotal = yTotal + Math.round m_event.acceleration.y * 100
+                zTotal = zTotal + Math.round m_event.acceleration.z * 100
+                totalEvents = totalEvents + 1
+                x_string = x.toString()
+                y_string = y.toString()
+                z_string = z.toString()
+                accelText = x_string + ", " + y_string + ", " + z_string
+                $("#acceleration").text accelText
+            
+        $(window).on "deviceorientation", (event) ->
+            o_event = event.originalEvent
+            if o_event.alpha != null
+                alpha = o_event.alpha.toFixed()
+                beta = o_event.beta.toFixed()
+                gamma = o_event.gamma.toFixed()
+                aTotal = aTotal + Math.round o_event.alpha
+                bTotal = bTotal + Math.round o_event.beta
+                gTotal = gTotal + Math.round o_event.gamma
+                totalEvents = totalEvents + 1
+                a_string = alpha.toString()
+                b_string = beta.toString()
+                g_string = gamma.toString()
+                oriText = a_string + ", " + b_string + ", " + g_string
+                $("#orientation").text oriText
+        
+        
+        
+        takeAverage = ()-> 
+            xAverage = xTotal / totalEvents
+            yAverage = yTotal / totalEvents
+            zAverage = zTotal / totalEvents
+            aAverage = aTotal / totalEvents
+            bAverage = bTotal / totalEvents
+            gAverage = gTotal / totalEvents
+            values = [xAverage, yAverage, zAverage, aAverage, bAverage, gAverage]
+            console.log("averages are: [xAverage, yAverage, zAverage, aAverage, bAverage, gAverage] " + values)
+            xTotal = 0
+            yTotal = 0
+            zTotal = 0
+            aTotal = 0
+            bTotal = 0
+            gTotal = 0
+            totalEvents = 0
+            prevAverage = currAverage
+            currAverage = values
+            checkGestures()
+            
+        checkGestures = ()->
+            period = 500
+            yDiff = currAverage[1] - prevAverage[1]
+            xDiff = currAverage[0] - prevAverage[0]
+            if yDiff < -12
+                $("#gesture").text "Down Gesture"
+            else if yDiff > 12
+                $("#gesture").text "Up Gesture"
+            else if xDiff > 10 && xDiff < 300
+                $("#gesture").text "Right Gesture"
+            else if xDiff < -10 || xDiff > 300
+                $("#gesture").text "Left Gesture"
+            else if values[3] < 20 && values[4] > 20 && values[5] < 20
+                $("#gesture").text "Forward"
+            eles if values[3] < 20 && values[4] < -20 && values[5] < 20
+                $("#gesture").text "backwards"
+            else 
+                $("#gesture").text "stillness"
+        
+        window.setInterval (->
+            takeAverage()
+        ), period
+        
+          
+
+        
+
+#gesturepad
+    #gesture-square
+        #screen
+    %h1#gesture &lt;&lt;GESTURE DETECTED&gt;&gt;
+    %h2#orientation 0, 90, 0
+    %h3#acceleration 0, 0, 0
+
+    
+// IGNORE, BUT KEEP THIS LINE (Back button)   
+= render :partial => "application/back_to_root"
+    
+:scss
+    $gesturepad-bg: desaturate(green, 70%);
+    $gesture-square: lighten($gesturepad-bg, 70%);
+    html, body{ overflow: none;}
+    #gesturepad{
+        height: 100%;
+        width: 100%;
+        overflow: none;
+        color: white;
+        font-family: Avenir, sans-serif;
+        font-size: 4em;
+        text-align: center;
+            
+        background: $gesturepad-bg;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        #gesture-square{
+            width: 150px;
+            height: 200px;
+            background: $gesture-square;
+            transition: transform 2s;
+            #screen{
+                width: calc(100% - 20px);
+                height: calc(100% - 30px);
+                background: darken($gesture-square, 80%);
+                margin: 10px;
+                margin-bottom: 20px;
+            }
+        }
+    }
+    
